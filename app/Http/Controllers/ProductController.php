@@ -37,7 +37,7 @@ class ProductController extends Controller
         if ($request->has('category')) {
             $products = $this->filterAndSearchServices->filterByCategory($request->category);
         } elseif ($request->has('price_min') && $request->has('price_max')) {
-            $products = $this->filterAndSearchServices->fileterByPriceRange($request->price_min, $request->price_max);
+            $products = $this->filterAndSearchServices->filterByPriceRange($request->price_min, $request->price_max);
         } elseif ($request->has('search')) {
             $products = $this->filterAndSearchServices->search($request->search);
         } elseif ($request->has('status')) {
@@ -46,7 +46,7 @@ class ProductController extends Controller
             $products = $this->productServices->listAllProducts();
         }
 
-        if (!($products) || !($products !== [])) {
+        if (!($products)) {
             return response()->json([
                 'status' => true,
                 'message' => 'No products available',

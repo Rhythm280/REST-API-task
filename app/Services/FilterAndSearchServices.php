@@ -4,58 +4,59 @@ namespace App\Services;
 
 use App\Models\Categories;
 use App\Models\Products;
-use ErrorException;
-use Illuminate\Database\QueryException;
-use Log;
+use Exception;
 
 class FilterAndSearchServices
 {
-    public function filterByCategory(int $category): bool|object
+    public function filterByCategory(int $category): bool|array
     {
-        $category = Categories::where('id', $category)->first();
+        $categoryModel = Categories::find($category);
+        if (!$categoryModel) {
+            return false;
+        }
         try {
-            $products = Products::where('category_id', $category->id)->get();
+            $products = Products::where('category_id', $categoryModel->id)->get();
             return $this->isEmpty($products);
-        } catch (QueryException | ErrorException $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
 
-    public function fileterByPriceRange(int $min, int $max): bool|object
+    public function filterByPriceRange(int $min, int $max): bool|array
     {
         try {
             $products = Products::where("price", ">=", $min)->where("price", "<=", $max)->get();
             return $this->isEmpty($products);
-        } catch (QueryException | ErrorException $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
 
-    public function search(string $search): bool|object
+    public function search(string $search): bool|array
     {
         try {
             $products = Products::where("name", "LIKE", "%{$search}%")->get();
             return $this->isEmpty($products);
-        } catch (QueryException | ErrorException $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
-    public function status(string $status): bool|object
+    public function status(string $status): bool|array
     {
         try {
             $products = Products::where("status", $status)->get();
             return $this->isEmpty($products);
-        } catch (QueryException | ErrorException $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
 
-    public function isEmpty($product)
+    public function isEmpty($product): bool|array
     {
         $product = $product->toArray();
         if (empty($product)) {
             return false;
         }
-        return true;
+        return $product;
     }
 }

@@ -33,7 +33,6 @@ class AuthRefreshToken
                     'message' => 'Token refresh failed',
                 ], 401);
             }
-            Log::error($e->getMessage());
         }
         return $next($request);
     }
