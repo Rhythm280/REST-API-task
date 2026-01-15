@@ -38,6 +38,8 @@ class CollectionController extends Controller
                 'message' => 'No collection found',
             ], 404);
         }
+
+        $collections->products = $collections->products()->get();
         return response()->json([
             'status' => true,
             'message' => 'Collection fetched successfully',
@@ -66,6 +68,7 @@ class CollectionController extends Controller
             ], 403);
         }
 
+        $collection->load('products');
         return response()->json([
             'status' => true,
             'message' => 'Collection fetched successfully',
@@ -104,6 +107,7 @@ class CollectionController extends Controller
                 'message' => 'No collection found',
             ], 404);
         }
+        $collections->load('products');
         return response()->json([
             'status' => true,
             'message' => 'Collection fetched successfully',
@@ -122,6 +126,7 @@ class CollectionController extends Controller
                 'message' => 'No collection found',
             ], 404);
         }
+        $collections->load('products');
         return response()->json([
             'status' => true,
             'message' => 'Collection fetched successfully',

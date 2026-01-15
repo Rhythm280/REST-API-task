@@ -6,6 +6,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AssetsController;
+use App\Http\Controllers\FilterAndSearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -32,6 +34,9 @@ Route::middleware('auth.refresh', 'auth.role:user')->prefix('user')->group(funct
     Route::get('/products/{id}', [ProductController::class, 'listProductById']);
     Route::post('/add-product-to-collection', [CollectionController::class, 'addProductToCollection']);
     Route::delete('/remove-product-from-collection', [CollectionController::class, 'removeProductFromCollection']);
+
+    // logout
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 Route::middleware('auth.refresh', 'auth.role:admin')->prefix('admin')->group(function () {
@@ -57,4 +62,11 @@ Route::middleware('auth.refresh', 'auth.role:admin')->prefix('admin')->group(fun
     Route::get('/products/{id}', [ProductController::class, 'listProductById']);
     Route::put('/products/{id}', [ProductController::class, 'updateProduct']);
     Route::delete('/products/{id}', [ProductController::class, 'deleteProduct']);
+
+    // logout
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // assets
+    Route::post('/products/{id}/assets', [AssetsController::class, 'addAssets']);
+    Route::delete('/assets/{id}', [AssetsController::class, 'deleteAsset']);
 });

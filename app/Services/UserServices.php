@@ -3,22 +3,26 @@ namespace App\Services;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class UserServices {
-    public function viewUserProfile() {
+class UserServices
+{
+    public function viewUserProfile()
+    {
         $user = $this->getAuthenticatedUser();
-        if(!$user) {
+        if (!$user) {
             return false;
         }
         return $user;
     }
 
-    public function getAuthenticatedUser() {
+    public function getAuthenticatedUser()
+    {
         return JWTAuth::user();
     }
 
-    public function updateUserProfile(array $data) {
+    public function updateUserProfile(array $data)
+    {
         $user = $this->getAuthenticatedUser();
-        if(!$user) {
+        if (!$user) {
             return false;
         }
         $user->update($data);

@@ -3,10 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-
-class ProductCollectionRequest extends FormRequest
+use Illuminate\Contracts\Validation\Validator;
+class AssetsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,18 +23,16 @@ class ProductCollectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'collection_name' => 'required|exists:App\Models\Collections,name',
-            'product_id' => 'required|exists:App\Models\Products,id',
+            'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx|max:5096',
         ];
     }
 
     public function messages()
     {
         return [
-            'collection_name.required' => 'Collection name is required',
-            'product_id.required' => 'Product ID is required',
-            'collection_name.exists' => 'Collection does not exist',
-            'product_id.exists' => 'Product does not exist',
+            'file.required' => 'File is required',
+            'file.mimes' => 'File must be an image, video, or document',
+            'file.max' => 'File size must not exceed 5MB',
         ];
     }
 
