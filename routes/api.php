@@ -14,7 +14,7 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-Route::middleware('auth.refresh', 'auth.role:user')->prefix('user')->group(function () {
+Route::middleware(['auth.refresh', 'auth.role:user'])->prefix('user')->group(function () {
     Route::get('/user-profile', [UserController::class, 'viewUserProfile']);
     Route::put('/update-profile', [UserController::class, 'updateUserProfile']);
 
@@ -39,7 +39,7 @@ Route::middleware('auth.refresh', 'auth.role:user')->prefix('user')->group(funct
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-Route::middleware('auth.refresh', 'auth.role:admin')->prefix('admin')->group(function () {
+Route::middleware(['auth.refresh', 'auth.role:admin'])->prefix('admin')->group(function () {
     // Users
     Route::get('/users', [AdminController::class, 'viewUsers']);
 
