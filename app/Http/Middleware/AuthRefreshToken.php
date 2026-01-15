@@ -5,7 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthRefreshToken
@@ -22,19 +24,16 @@ class AuthRefreshToken
         } catch(Exception $e) {
             try {
                 $newToken = JWTAuth::refresh(JWTAuth::getToken());
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Token refreshed successfully',
-                    'data' => [
-                        'token' => $newToken,
-                    ],
-                ]);
-            } catch(Exception $e) {
+                $request->headers->set('Authorization', 'Bearer ' . $newToken);
+                JWTAuth::setToken($newToken);
+                return $next($request);
+            } catch(Exception $refreshException) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Token refreshed failed',
+                    'message' => 'Token refresh failed',
                 ], 401);
             }
+            Log::error($e->getMessage());
         }
         return $next($request);
     }

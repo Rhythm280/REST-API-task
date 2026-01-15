@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class LoginRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
         ];
     }
@@ -39,10 +40,10 @@ class LoginRequest extends FormRequest
     }
 
     public function failedValidation(Validator $validator) {
-        return response()->json([
+        throw new HttpResponseException(response()->json([
             'status' => false,
             'message' => 'Validation errors',
             'data' => $validator->errors(),
-        ], 422);
+        ], 422));
     }
 }

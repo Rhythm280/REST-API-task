@@ -31,16 +31,14 @@ class RegisterRequest extends FormRequest
         ];
     }
 
-    public function message() {
+    public function messages() {
         return [
             'name.required' => 'Name is required',
-            'name.string' => 'Name must be a string',
             'name.max' => 'Name must be less than 50 characters',
             'email.required' => 'Email is required',
             'email.email' => 'Email must be a valid email address',
             'email.unique' => 'Email already exists',
             'password.required' => 'Password is required',
-            'password.string' => 'Password must be a string',
             'password.min' => 'Password must be at least 8 characters',
             'password_confirm.required' => 'Password confirmation is required',
             'password_confirm.same' => 'Password confirmation does not match',
@@ -49,10 +47,10 @@ class RegisterRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        return response()->json([
+        throw new HttpResponseException(response()->json([
             'status' => false,
             'message' => 'Validation errors',
             'data' => $validator->errors(),
-        ], 422);
+        ], 422));
     }
 }

@@ -41,10 +41,10 @@ class UpdateCategoryRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        return response()->json([
+        throw new HttpResponseException(response()->json([
             'status' => false,
             'message' => 'Validation errors',
             'data' => $validator->errors(),
-        ], 422);
+        ], 422));
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Services\UserServices;
+use App\Http\Requests\UpdateUserRequest;
+use App\Services\UpdateUserService;
 
 class UserController extends Controller
 {
@@ -44,6 +46,9 @@ class UserController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'User profile updated successfully',
+            'data' => [
+                'user' => $user,
+            ]
         ], 200);
     }
 }

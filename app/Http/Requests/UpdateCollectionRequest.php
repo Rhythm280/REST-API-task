@@ -4,11 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Rule;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateUserRequest extends FormRequest
+class updateCollectionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,32 +23,21 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->user() ? $this->user()->id : null;
-
         return [
             'name' => 'nullable|string|max:50',
-            'email' => [
-                'nullable',
-                'email',
-                Rule::unique('users', 'email')->ignore($userId),
-            ],
-            'password' => 'nullable|string|min:8',
         ];
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [
-            'name.max' => 'Name should not exceed 50 characters.',
-            'name.string' => 'Name must be a string.',
-            'email.email' => 'Email must be a valid email address.',
-            'email.unique' => 'Email has already been taken.',
+            'name.max' => 'Name must be less than 50 characters',
         ];
     }
 
-    protected function failedValidation(Validator $validator): void
+    public function failedValidation(Validator $validator)
     {
-        throw new ValidationException($validator, response()->json([
+        throw new HttpResponseException(response()->json([
             'status' => false,
             'message' => 'Validation errors',
             'data' => $validator->errors(),

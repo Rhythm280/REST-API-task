@@ -13,6 +13,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware('auth.refresh', 'auth.role:user')->group(function () {
     Route::get('/user-profile', [UserController::class, 'viewUserProfile']);
+    Route::put('/update-profile', [UserController::class, 'updateUserProfile']);
 
     // Categories
     Route::get('/categories', [CategoryController::class, 'viewCategories']);
@@ -23,6 +24,7 @@ Route::middleware('auth.refresh', 'auth.role:user')->group(function () {
     Route::get('/collections', [CollectionController::class, 'viewCollections']);
     Route::get('/collections/{id}', [CollectionController::class, 'viewCollectionByID']);
     Route::delete('/collections/{id}', [CollectionController::class, 'deleteCollection']);
+    Route::put('/update-collection/{id}', [CollectionController::class, 'updateCollection']);
 });
 
 Route::middleware('auth.refresh', 'auth.role:admin')->group(function () {
@@ -39,6 +41,6 @@ Route::middleware('auth.refresh', 'auth.role:admin')->group(function () {
     // collections
     Route::get('/view-collections', [CollectionController::class, 'viewCollections']);
     Route::get('/view-user-collections/{id}', [CollectionController::class, 'viewUserCollections']);
-    Route::delete('/delete-user-collections/{id}', [CollectionController::class, 'deleteUserCollections']);
+    Route::delete('/set-collections-status/{id}', [CollectionController::class, 'setCollectionStatus']);
     Route::delete('/delete-collection/{id}', [CollectionController::class, 'deleteCollection']);
 });
