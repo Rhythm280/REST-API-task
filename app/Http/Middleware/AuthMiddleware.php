@@ -19,13 +19,13 @@ class AuthMiddleware
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
-            if(!$user || $user->role !== $role) {
+            if (!$user || $user->role !== $role) {
                 return response()->json([
                     'status' => false,
                     'message' => 'You are not authorized to access this resource',
                 ], 401);
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Token is invalid or expired',

@@ -18,7 +18,7 @@ class UserController extends Controller
     public function viewUserProfile()
     {
         $user = $this->userServices->viewUserProfile();
-        if(!$user) {
+        if (!$user) {
             return response()->json([
                 'status' => false,
                 'message' => 'User not found',
@@ -35,9 +35,10 @@ class UserController extends Controller
         ]);
     }
 
-    public function updateUserProfile(UpdateUserRequest $request) {
-        $user  = $this->userServices->updateUserProfile($request->all());
-        if(!$user) {
+    public function updateUserProfile(UpdateUserRequest $request)
+    {
+        $user = $this->userServices->updateUserProfile($request->all());
+        if (!$user) {
             return response()->json([
                 'status' => false,
                 'message' => 'User not found',

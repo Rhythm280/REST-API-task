@@ -18,7 +18,8 @@ class AuthController extends Controller
         $this->authServices = $authServices;
     }
 
-    public function register(RegisterRequest $request) {
+    public function register(RegisterRequest $request)
+    {
         $user = $this->authServices->register($request->all());
         return response()->json([
             'status' => true,
@@ -29,17 +30,18 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(LoginRequest $request) {
+    public function login(LoginRequest $request)
+    {
         $credentials = $request->all();
         $token = $this->authServices->login($credentials);
-        if(!$token) {
+        if (!$token) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid credentials',
             ], 401);
         }
         $user = $this->authServices->getAuthenticatedUser();
-        if(!$user) {
+        if (!$user) {
             return response()->json([
                 'status' => false,
                 'message' => 'User not found',
@@ -55,9 +57,10 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout() {
+    public function logout()
+    {
         $logout = $this->authServices->logout();
-        if(!$logout) {
+        if (!$logout) {
             return response()->json([
                 'status' => false,
                 'message' => 'Logout failed',

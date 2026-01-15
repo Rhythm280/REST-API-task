@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\CollectionRequest;
-use App\Models\Collections;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Services\CollectionServices;
+use App\Http\Requests\ProductCollectionRequest;
+use App\Http\Requests\UpdateCollectionRequest;
 
-class CollectionController  extends Controller
+class CollectionController extends Controller
 {
     protected $collectionServices;
 
@@ -17,7 +17,8 @@ class CollectionController  extends Controller
         $this->collectionServices = $collectionServices;
     }
 
-    public function createCollection(CollectionRequest $request) {
+    public function createCollection(CollectionRequest $request)
+    {
         $collection = $this->collectionServices->createCollection($request->all());
         return response()->json([
             'status' => true,
@@ -28,9 +29,10 @@ class CollectionController  extends Controller
         ]);
     }
 
-    public function viewCollections() {
-        $collections = $this->collectionServices->viewCollections();
-        if(!$collections) {
+    public function viewCollections()
+    {
+        $collections = $this->collectionServices->viewAllCollections();
+        if (!$collections) {
             return response()->json([
                 'status' => false,
                 'message' => 'No collection found',
@@ -45,23 +47,25 @@ class CollectionController  extends Controller
         ]);
     }
 
-    public function viewCollectionByID(int $id) {
-        $collection = $this->collectionServices->viewCollectionByID($id);
+    public function viewCollectionById(int $id)
+    {
+        $collection = $this->collectionServices->viewCollectionById($id);
 
-        if ($collection->user_id !== JWTAuth::user()->id ) {
+        if (!$collection) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Collection not found',
+            ], 404);
+        }
+
+        if ($collection->user_id !== JWTAuth::user()->id) {
+            \Illuminate\Support\Facades\Log::info("Auth Error: Collection User ID: " . $collection->user_id . " vs Logged In User ID: " . JWTAuth::user()->id);
             return response()->json([
                 'status' => false,
                 'message' => 'You are not authorized to view this collection',
             ], 403);
         }
 
-        if(!$collection) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Collection not found',
-            ], 404);
-        }
-        
         return response()->json([
             'status' => true,
             'message' => 'Collection fetched successfully',
@@ -71,16 +75,17 @@ class CollectionController  extends Controller
         ]);
     }
 
-    public function deleteCollection(int $id) {
-        $collection = $this->collectionServices->viewCollectionByID($id);
+    public function deleteCollectionById(int $id)
+    {
+        $collection = $this->collectionServices->deleteCollectionById($id);
 
-        if(!$collection) {
+        if (!$collection) {
             return response()->json([
                 'status' => false,
                 'message' => 'Collection not found',
             ], 404);
         }
-        
+
         return response()->json([
             'status' => true,
             'message' => 'Collection deleted successfully',
@@ -90,9 +95,10 @@ class CollectionController  extends Controller
         ]);
     }
 
-    public function viewUserCollections(int $id) {
-        $collections = $this->collectionServices->viewCollections($id);
-        if(!$collections) {
+    public function userCollections()
+    {
+        $collections = $this->collectionServices->userCollection();
+        if (!$collections) {
             return response()->json([
                 'status' => false,
                 'message' => 'No collection found',
@@ -107,16 +113,35 @@ class CollectionController  extends Controller
         ]);
     }
 
-    public function setCollectionStatus(int $id) {
-        $collection = $this->collectionServices->viewCollectionByID($id);
+    public function viewUserCollections(int $id)
+    {
+        $collections = $this->collectionServices->viewUserCollections($id);
+        if (!$collections) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No collection found',
+            ], 404);
+        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Collection fetched successfully',
+            'data' => [
+                'collections' => $collections
+            ]
+        ]);
+    }
 
-        if(!$collection) {
+    public function setCollectionStatus(int $id)
+    {
+        $collection = $this->collectionServices->setCollectionStatus($id);
+
+        if (!$collection) {
             return response()->json([
                 'status' => false,
                 'message' => 'Collection not found',
             ], 404);
         }
-        
+
         return response()->json([
             'status' => true,
             'message' => 'Collection updated successfully',
@@ -126,19 +151,56 @@ class CollectionController  extends Controller
         ]);
     }
 
-    public function updateCollection(int $id, UpdateCollectionRequest $request) {
-        $collection = $this->collectionServices->viewCollectionByID($id, $request->all());
+    public function updateCollectionById(int $id, UpdateCollectionRequest $request)
+    {
+        $collection = $this->collectionServices->updateCollectionById($id, $request->all());
 
-        if(!$collection) {
+        if (!$collection) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Collection not found or unauthorized',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Collection updated successfully',
+            'data' => [
+                'collection' => $collection
+            ]
+        ]);
+    }
+
+    public function addProductToCollection(ProductCollectionRequest $request)
+    {
+        $collection = $this->collectionServices->addProductToCollection($request->all());
+        if (!$collection) {
             return response()->json([
                 'status' => false,
                 'message' => 'Collection not found',
             ], 404);
         }
-        
         return response()->json([
             'status' => true,
-            'message' => 'Collection updated successfully',
+            'message' => 'Product added to collection successfully',
+            'data' => [
+                'collection' => $collection
+            ]
+        ]);
+    }
+
+    public function removeProductFromCollection(ProductCollectionRequest $request)
+    {
+        $collection = $this->collectionServices->removeProductFromCollection($request->all());
+        if (!$collection) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Collection not found',
+            ], 404);
+        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Product removed from collection successfully',
             'data' => [
                 'collection' => $collection
             ]

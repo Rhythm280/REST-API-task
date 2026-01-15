@@ -21,13 +21,13 @@ class AuthRefreshToken
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             try {
                 $newToken = JWTAuth::refresh(JWTAuth::getToken());
                 $request->headers->set('Authorization', 'Bearer ' . $newToken);
                 JWTAuth::setToken($newToken);
                 return $next($request);
-            } catch(Exception $refreshException) {
+            } catch (Exception $refreshException) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Token refresh failed',

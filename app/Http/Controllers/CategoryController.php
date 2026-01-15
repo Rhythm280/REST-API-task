@@ -4,17 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Models\Categories;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Str;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Services\CategoryServices;
 
 class CategoryController extends Controller
 {
+
+    protected $categoryServices;
+
+    public function __construct(CategoryServices $categoryServices)
+    {
+        $this->categoryServices = $categoryServices;
+    }
+
     public function viewCategories()
     {
-        $categories = Categories::all();
-        if ($categories->isEmpty()) {
+        $categories = $this->categoryServices->viewCategories();
+        if (!$categories) {
             return response()->json([
                 'status' => false,
                 'message' => 'No categories found',
@@ -31,11 +36,13 @@ class CategoryController extends Controller
 
     public function createCategory(CategoryRequest $request)
     {
-        $category = Categories::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'description' => $request->description,
-        ]);
+        $category = $this->categoryServices->createCategory($request->all());
+        if (!$category) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Category not created',
+            ], 404);
+        }
         return response()->json([
             'status' => true,
             'message' => 'Category created successfully',
@@ -45,15 +52,17 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function viewCategoryById(int $id)
+    public function viewCategoryByName(string $name)
     {
-        $category = Categories::find($id);
+        $category = $this->categoryServices->viewCategoryByName($name);
         if (!$category) {
             return response()->json([
                 'status' => false,
                 'message' => 'Category not found',
             ], 404);
         }
+
+        $category->load('products');
 
         return response()->json([
             'status' => true,
@@ -64,9 +73,9 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function updateCategory(int $id, UpdateCategoryRequest $request)
+    public function updateCategory(string $name, UpdateCategoryRequest $request)
     {
-        $category = Categories::find($id);
+        $category = $this->categoryServices->updateCategoryByName($name, $request->all());
         if (!$category) {
             return response()->json([
                 'status' => false,
@@ -85,16 +94,16 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function deleteCategory(int $id)
+    public function deleteCategory(string $name)
     {
-        $category = Categories::find($id);
+        $category = $this->categoryServices->deleteCategoryByName($name);
         if (!$category) {
             return response()->json([
                 'status' => false,
                 'message' => 'Category not found',
             ], 404);
         }
-        
+
         $category->delete();
         return response()->json([
             'status' => true,

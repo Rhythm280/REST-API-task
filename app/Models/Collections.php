@@ -14,13 +14,9 @@ class Collections extends Model
         'user_id',
     ];
 
-    protected $hidden = [
-        'user_id',
-    ];
-
     public function products()
     {
-        return $this->hasMany(Products::class);
+        return $this->belongsToMany(Products::class, 'collection_product', 'collection_id', 'product_id');
     }
 
     public function user() {

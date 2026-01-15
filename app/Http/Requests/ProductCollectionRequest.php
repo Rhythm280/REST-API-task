@@ -3,10 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Validator;
+use Illuminate\Http\Exception\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class ProductCollectionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,24 +24,22 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required|string|min:8',
+            'collection_name' => 'required|exists:App\Models\Collections,name',
+            'product_id' => 'required|exists:App\Models\Products,id',
         ];
     }
 
     public function messages()
     {
         return [
-            'email.required' => 'Email is required',
-            'email.email' => 'Email must be a valid email address',
-            'password.required' => 'Password is required',
-            'password.string' => 'Password must be a string',
-            'password.min' => 'Password must be at least 8 characters',
+            'collection_name.required' => 'Collection name is required',
+            'product_id.required' => 'Product ID is required',
+            'collection_name.exists' => 'Collection does not exist',
+            'product_id.exists' => 'Product does not exist',
         ];
     }
 
-    public function failedValidation(Validator $validator)
-    {
+    public function failedValidation(Validator $validator) {
         throw new HttpResponseException(response()->json([
             'status' => false,
             'message' => 'Validation errors',

@@ -25,10 +25,10 @@ class ProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:50',
+            'sku' => 'required|string|max:50',
             'price' => 'required|numeric',
             'description' => 'nullable|string',
-            'category_id' => 'nullable|exists:categories,id',
-            'collection_id' => 'nullable|exists:categories,id',
+            'category_name' => 'required|exists:categories,name',
         ];
     }
 
@@ -36,11 +36,12 @@ class ProductRequest extends FormRequest
     {
         return [
             'name.required' => 'Name is required',
+            'sku.required' => 'SKU is required',
             'name.max' => 'Name must be less than 50 characters',
             'price.required' => 'Price is required',
             'price.numeric' => 'Price must be a number',
-            'category_id.exists' => 'Category does not exist',
-            'collection_id.exists' => 'Collection does not exist',
+            'category_name.required' => 'Category name is required',
+            'category_name.exists' => 'Category does not exist',
         ];
     }
 

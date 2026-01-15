@@ -13,9 +13,10 @@ class AdminController extends Controller
         $this->adminServices = $adminServices;
     }
 
-    public function viewUsers() {
+    public function viewUsers()
+    {
         $users = $this->adminServices->viewUsers();
-        if(!$users) {
+        if (!$users) {
             return response()->json([
                 'status' => false,
                 'message' => 'No users found',

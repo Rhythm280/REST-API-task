@@ -23,9 +23,9 @@ class Products extends Model
         return $this->belongsTo(Categories::class);
     }
 
-    public function collection()
+    public function collections()
     {
-        return $this->belongsTo(Collections::class);
+        return $this->belongsToMany(Collections::class, 'collection_product', 'product_id', 'collection_id');
     }
 
     public function assets()

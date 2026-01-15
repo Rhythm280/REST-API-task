@@ -24,8 +24,8 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:50',
-            'slug' => 'required|string|max:50',
+            'name' => 'unique:categories,name|required|string|max:50',
+            'slug' => 'unique:categories,slug|required|string|max:50',
             'description' => 'nullable|string',
         ];
     }
@@ -36,6 +36,8 @@ class CategoryRequest extends FormRequest
             'name.required' => 'Name is required',
             'name.string' => 'Name must be a string',
             'name.max' => 'Name must be less than 50 characters',
+            'slug.required' => 'Slug is required',
+            'slug.max' => 'Slug must be less than 50 characters',
         ];
     }
 

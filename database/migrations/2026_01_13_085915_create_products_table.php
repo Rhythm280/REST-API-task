@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('status')->default('active')->comment('active, inactive');
             $table->foreignId('category_id')->constrained('categories');
-            $table->foreignId('collection_id')->constrained('collections');
+
             $table->timestamps();
         });
     }
