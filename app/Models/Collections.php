@@ -19,7 +19,8 @@ class Collections extends Model
         return $this->belongsToMany(Products::class, 'collection_product', 'collection_id', 'product_id');
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }
