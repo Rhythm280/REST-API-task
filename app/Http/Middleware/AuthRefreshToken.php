@@ -18,14 +18,25 @@ class AuthRefreshToken
     public function handle(Request $request, Closure $next): Response
     {
         try {
+            \Log::info("check the token");
             $user = JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
             try {
+                \Log::info("Refresh Token started");
                 $newToken = JWTAuth::refresh(JWTAuth::getToken());
-                $request->headers->set('Authorization', 'Bearer ' . $newToken);
                 JWTAuth::setToken($newToken);
-                return $next($request);
+                $user = JWTAuth::setToken($newToken)->authenticate();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Token refreshed successfully',
+                    'data' => [
+                        'user' => $user,
+                        'access_token' => $newToken,
+                    ],
+                ], 200);
             } catch (Exception $refreshException) {
+                \Log::error("Refresh Token failed: " . $refreshException->getMessage());
                 return response()->json([
                     'status' => false,
                     'message' => 'Token refresh failed',
